@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        /* div {
+            position: absolute;
+            left: 600px;
+            top: 0px;
+            width: 100px;
+            height: 100px;
+            opacity: 1;
+            background: orange;
+        }
+
+        button {
+            margin-top: 150px;
+        }
+
+        span {
+            height: 100px;
+            background: black;
+            width: 2px;
+            position: absolute;
+            top: 0px;
+            left: 400px;
+        } */
+
+
+        /* .wrapper {
+            width: 400px;
+            height: 80px;
+            background: orange;
+            position: absolute;
+            left: -400px;
+            top: 200px;
+        }
+
+        .content {
+            width: 40px;
+            height: 80px;
+            background: red;
+            position: absolute;
+            right: -40px;
+            top: 0px;
+        } */
+
+        /* div {
+            width: 100px;
+            height: 100px;
+            background: red;
+            border: 1px solid black;
+            opacity: 1;
+            margin-bottom: 80px;
+        } */
+        div {
+            position: absolute;
+            left: 0px;
+            width: 100px;
+            height: 100px;
+            background: red;
+            opacity: 1;
+        }
+        #demo1 {
+            top: 200px;
+        }
+
+        #demo2 {
+            top: 600px;
+        }
+    </style>
+</head>
+<body>
+    <!-- <div class="wrapper">
+        <div class="content"></div>
+    </div> -->
+<!-- 
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div> -->
+
+    <div id='demo1'></div>
+    <div id='demo2'></div>
+    <script>
+        demo1.onclick = function () {
+            startMove(this, {width: 300, height: 300, left: 300, top: 400, opacity: 50}, function () {
+                startMove(this, {width: 100, height: 100, left: 0, top: 200, opacity: 100}, function() {
+                    startMove(demo2, {width: 300, height: 300, left: 300, top: 400, opacity: 50}, function () {
+                        startMove(this, {width: 100, height: 100, left: 0, top: 600, opacity: 100}, function () {
+                            alert('over');
+                        })
+                    })
+                } )
+            });
+        }
+
+        function getStyle (dom, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(dom, null)[attr];
+            }else {
+                return dom.currentStyle[attr];
+            }
+        }
+
+        function startMove (dom, targetObj, cb) {
+            clearInterval(dom.timer);
+            var iSpeed = 0;
+            var iCurValue = 0;
+            dom.timer = setInterval(function () {
+                var bStop = true;
+                for (var attr in targetObj) {
+                    if (attr === 'opacity') {
+                        iCurValue = parseFloat( getStyle(dom, attr) ) * 100;
+                    }else {
+                        iCurValue = parseInt( getStyle(dom, attr) );
+                    }
+                    iSpeed = ( targetObj[attr] - iCurValue ) / 7;
+                    iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+
+                    if (attr === 'opacity' ) {
+                        dom.style.opacity = (iCurValue + iSpeed) / 100;
+                    }else {
+                        dom.style[attr] = iCurValue + iSpeed + 'px';
+                    }
+
+                    if (iCurValue !== targetObj[attr]) {
+                        bStop = false;
+                    }
+                }
+
+                if (bStop) {
+                    clearInterval(dom.timer);
+                    cb && cb.apply(dom, arguments);
+                }
+            }, 30);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        // var oDivArray = document.getElementsByTagName('div');
+        // var timer = null;
+        // oDivArray[0].onmouseenter = function () {
+        //     startMove(this, 'width', 400);
+        // }
+        // oDivArray[0].onmouseleave = function () {
+        //     startMove(this, 'width', 100);
+        // }
+
+        // oDivArray[1].onmouseenter = function () {
+        //     startMove(this, 'height', 400);
+        // }
+        // oDivArray[1].onmouseleave = function () {
+        //     startMove(this, 'height', 100);
+        // }
+
+        // oDivArray[2].onmouseenter = function () {
+        //     startMove(this, 'opacity', 50);
+        // }
+        // oDivArray[2].onmouseleave = function () {
+        //     startMove(this, 'opacity', 100);
+        // }
+
+        // oDivArray[3].onmouseenter = function () {
+        //     startMove(this, 'borderWidth', 400);
+        // }
+        // oDivArray[3].onmouseleave = function () {
+        //     startMove(this, 'borderWidth', 1);
+        // }
+
+        // function getStyle (dom, attr) {
+        //     if (window.getComputedStyle) {
+        //         return window.getComputedStyle(dom, null)[attr];
+        //     }else {
+        //         return dom.currentStyle[attr];
+        //     }
+        // }
+        
+        // function startMove (dom, attr, target) {
+        //     clearInterval(dom.timer);
+        //     var iSpeed;
+        //     var iCurValue;
+        //     dom.timer = setInterval(function () {
+        //         if (attr === 'opacity') {
+        //             iCurValue = parseFloat( getStyle(dom, attr) ) * 100;
+        //         }else {
+        //             iCurValue = parseInt( getStyle(dom, attr) );
+        //         }
+        //         iSpeed = (target - iCurValue) / 7;
+        //         iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+        //         if (iCurValue === target) {
+        //             clearInterval(dom.timer);
+        //         }else {
+        //             if (attr === 'opacity') {
+        //                 dom.style.opacity = (iCurValue + iSpeed) / 100;
+        //             }else {
+        //                 dom.style[attr] = iCurValue + iSpeed + 'px';
+        //             }
+        //         }
+        //     }, 30)
+        // }
+
+
+        // for (var i = 0; i < oDivArray.length; i++) {
+        //     oDivArray[i].onmouseenter = function () {
+        //         startMove(this, 400);
+        //     }
+        //     oDivArray[i].onmouseleave = function () {
+        //         startMove(this, 100);
+        //     }
+        // }
+
+
+
+
+        // function startMove (dom, target) {
+        //     clearInterval(dom.timer);
+        //     var iSpeed = 0;
+        //     dom.timer = setInterval(function () {
+        //         iSpeed = (target - dom.offsetWidth) / 7;
+        //         iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+        //         if (dom.offsetWidth == target) {
+        //             clearInterval(dom.timer);
+        //         }
+        //         dom.style.width = dom.offsetWidth + iSpeed + 'px';
+        //     }, 30)
+        // }
+
+        // var oWrapper = document.getElementsByClassName('wrapper')[0];
+        // var timer = null;
+
+        // oWrapper.onmouseenter = function () {
+        //     startMove(this, 0);
+        // }
+        // oWrapper.onmouseleave = function () {
+        //     startMove(this, -400);
+        // }
+
+        // function startMove (dom, target) {
+        //     clearInterval(timer);
+        //     var iSpeed = 0;
+        //     timer = setInterval(function () {
+        //         iSpeed = (target - dom.offsetLeft) / 7;
+        //         iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+        //         if (dom.offsetLeft == target) {
+        //             clearInterval(timer);
+        //             console.log('over')
+        //         }
+        //         dom.style.left = dom.offsetLeft + iSpeed + 'px';
+        //     }, 30)
+        // }
+
+
+        // s = vt;
+        // var timer = null;
+        // var iCurAlpha = 100;
+        // btn.onclick = function () {
+        //     startMove(demo, 50);
+        // }
+
+
+        // function startMove (dom, target) {
+        //     clearInterval(timer);
+        //     var iSpeed = 0;
+        //     timer = setInterval(function () {
+        //         iSpeed = (target - iCurAlpha) / 7;
+        //         iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+        //         if (iCurAlpha == target) {
+        //             clearInterval(timer);
+        //             console.log('over');
+        //         }else {
+        //             dom.style.opacity = (iCurAlpha + iSpeed) / 100;
+        //             iCurAlpha = (iCurAlpha + iSpeed);
+        //         }
+        //     }, 30)
+        // }
+
+
+        // 1 -> 100
+        // 0.5 -> 50
+
+        // 100 + iSpeed
+
+        // function startMove (dom, target) {
+        //     clearInterval(timer);
+        //     var iSpeed = 0;
+        //     timer = setInterval(function () {
+        //         iSpeed = (target - dom.offset) / 7;
+        //         iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+        //         if (dom.offsetLeft == target) {
+        //             clearInterval(timer);
+        //             console.log('over')
+        //         }
+        //         dom.style.left = dom.offsetLeft + iSpeed + 'px';
+        //     }, 30)
+        // }
+        //  0 - 1
+
+
+
+
+        
+        // function startMove (dom, target) {
+        //     var iSpeed = dom.offsetLeft - target < 0 ? 8 : -8;
+        //     clearInterval(timer);
+        //     timer = setInterval(function () {
+        //         if (Math.abs( target - dom.offsetLeft ) < Math.abs( iSpeed ) ) {
+        //             clearInterval(timer);
+        //             dom.style.left =  target + 'px';
+        //         }else {
+        //             dom.style.left = dom.offsetLeft + iSpeed + 'px';
+        //         }
+        //     }, 30);            
+        // }
+    </script>
+</body>
+</html>

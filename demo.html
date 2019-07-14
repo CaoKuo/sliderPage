@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .wrapper {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            border: 1px solid #000;
+            margin: 100px auto;
+            overflow: hidden;
+        }
+        .sliderPage {
+            position: absolute;
+            width: 2500px;
+            height: 300px;
+            left: 0px;
+        }
+        .sliderPage li {
+            float: left;
+        }
+        .sliderPage li img {
+            width: 500px;
+            height: 300px;
+        }
+        .btn {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+            text-align: center;
+            line-height: 40px;
+            color: #fff;
+            top: 50%;
+            margin-top: -20px;
+            opacity: 0.4;
+            display: none;
+            cursor: pointer;
+        }
+        .wrapper:hover .btn {
+            display: block;
+        }
+        .leftBtn {
+            left: 10px;
+        }
+        .rightBtn {
+            right: 10px;
+        }
+        .page {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            /* background-color: #eee;
+            border: 1px solid #eee; */
+        }
+        .page div {
+            width: 6px;
+            height: 6px;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .active {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <ul class="sliderPage">
+            <li><img src="./image/dog1.jpg" alt=""></li>
+            <li><img src="./image/dog2.jpg" alt=""></li>
+            <li><img src="./image/dog3.jpg" alt=""></li>
+            <li><img src="./image/dog4.jpg" alt=""></li>
+            <li><img src="./image/dog1.jpg" alt=""></li>
+        </ul>
+        <div class="leftBtn btn">&lt;</div>
+        <div class="rightBtn btn">&gt;</div>
+        <div class="page">
+            <div class="active"></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <script>
+        var sliderPage = document.getElementsByClassName('sliderPage')[0];
+        var timer = null;
+        var imgWidth = sliderPage.children[0].offsetWidth;
+        var num = sliderPage.children.length - 1;
+        var leftBtn = document.getElementsByClassName('leftBtn')[0];
+        var rightBtn = document.getElementsByClassName('rightBtn')[0];
+        var lock = true;
+        var sliderIndex = document.getElementsByClassName('page')[0].children;
+        var index = 0;
+        console.log('silderInde:', sliderIndex);
+        leftBtn.onclick = function () {
+            autoMove(-1);
+        }
+        
+        rightBtn.onclick = function () {
+            autoMove(1);
+        }
+
+        for (var i = 0; i < sliderIndex.length; i++) {
+            (function (myIndex) {
+                sliderIndex[myIndex].onclick = function () {
+                    index = myIndex;
+                    lock = false;
+                    clearTimeout(timer);
+                    startMove(sliderPage, {left: - myIndex * imgWidth}, function () {
+                       
+                        timer = setTimeout(autoMove, 1000);
+                        changeIndex(index);
+                        lock = true;
+                    })
+                }
+            }(i))
+            
+        }
+        // direction >= 0 正向移动   < 0 逆向运动
+        function autoMove(direction) {
+            clearTimeout(timer);
+            if (lock) {
+                lock = false;
+                if(!direction || direction >= 0) {
+                    index ++;
+                    startMove(sliderPage, {left: sliderPage.offsetLeft - imgWidth}, function () {
+                        console.log(num, num * imgWidth);
+                        if (sliderPage.offsetLeft == -num * imgWidth) {
+                            sliderPage.style.left = '0px';
+                            index = 0;
+                        }
+                        timer = setTimeout(autoMove, 1000);
+                        lock = true;
+                        changeIndex(index);
+                    })
+                }else {
+                    index --;
+                    if (sliderPage.offsetLeft == 0) {
+                        sliderPage.style.left = -num * imgWidth + 'px';
+                        index = num - 1;
+                    }
+                    startMove(sliderPage, {left: sliderPage.offsetLeft + imgWidth}, function () {
+                        timer = setTimeout(autoMove, 1000);
+                        lock = true;
+                        changeIndex(index);
+                    })
+                }
+            }
+            
+        }
+
+        timer = setTimeout(autoMove, 1000);
+
+
+        function changeIndex(index) {
+            for (var i = 0; i < sliderIndex.length; i++) {
+                sliderIndex[i].className = '';
+            }
+            sliderIndex[index].className = 'active';
+        }
+
+
+
+        function getStyle (dom, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(dom, null)[attr];
+            }else {
+                return dom.currentStyle[attr];
+            }
+        }
+
+        function startMove (dom, targetObj, cb) {
+            clearInterval(dom.timer);
+            var iSpeed = 0;
+            var iCurValue = 0;
+            dom.timer = setInterval(function () {
+                var bStop = true;
+                for (var attr in targetObj) {
+                    if (attr === 'opacity') {
+                        iCurValue = parseFloat( getStyle(dom, attr) ) * 100;
+                    }else {
+                        iCurValue = parseInt( getStyle(dom, attr) );
+                    }
+                    iSpeed = ( targetObj[attr] - iCurValue ) / 7;
+                    iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+
+                    if (attr === 'opacity' ) {
+                        dom.style.opacity = (iCurValue + iSpeed) / 100;
+                    }else {
+                        dom.style[attr] = iCurValue + iSpeed + 'px';
+                    }
+
+                    if (iCurValue !== targetObj[attr]) {
+                        bStop = false;
+                    }
+                }
+
+                if (bStop) {
+                    clearInterval(dom.timer);
+                    cb && cb.apply(dom, arguments);
+                }
+            }, 30);
+        }
+
+
+
+
+
+
+
+
+    
+    </script>
+</body>
+</html>
